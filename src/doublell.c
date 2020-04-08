@@ -7,21 +7,21 @@
 
 #include "doublell.h"
 
-EnqItem *initEnqItem(char *name, int val) {
+EnqItem *initEnqItem(char *name, void *data) {
     EnqItem *e = malloc(sizeof(EnqItem));
-    initEnqItemPointer(e, name, val);
+    initEnqItemPointer(e, name, data);
     return e;
 }
 
-void initEnqItemPointer(EnqItem *e, char *name, int val) {
+void initEnqItemPointer(EnqItem *e, char *name, void *data) {
     strcpy(e->name, name);
-    e->val = val;
+    e->data = data;
     e->next = e;
     e->prev = e;
 }
 
 DoublyLinkedList initDoublyLinkedList(char *name) {
-    return initEnqItem(name, -1);;
+    return initEnqItem(name, NULL);
 }
 
 bool isEnqueued(EnqItem *e) {
@@ -70,12 +70,12 @@ EnqItem *dequeue(EnqItem *e) {
     return e;
 }
 
-void dequeueHead(DoublyLinkedList anchor) {
-    dequeue(anchor->next);
+EnqItem *dequeueHead(DoublyLinkedList anchor) {
+    return dequeue(anchor->next);
 }
 
-void dequeueTail(DoublyLinkedList anchor) {
-    dequeue(anchor->prev);
+EnqItem *dequeueTail(DoublyLinkedList anchor) {
+    return dequeue(anchor->prev);
 }
 
 EnqItem *getHead(DoublyLinkedList anchor) {
@@ -104,7 +104,6 @@ char *getItemName(EnqItem *e) {
 
 void destroyItem(EnqItem *e) {
     dequeue(e);
-    free(e->name);
     free(e);
 }
 
@@ -117,7 +116,6 @@ DoublyLinkedList emptyList(DoublyLinkedList anchor) {
 
 DoublyLinkedList destroyList(DoublyLinkedList anchor) {
     emptyList(anchor);
-    free(anchor->name);
     free(anchor);
 
     return NULL;
@@ -125,22 +123,20 @@ DoublyLinkedList destroyList(DoublyLinkedList anchor) {
 
 int getLength(DoublyLinkedList anchor) {
     int len = 0;
-    while (anchor != NULL) {
-        len++;
-        anchor = anchor->next;
+    ITERATE(cur, anchor) {
+	len++;
     }
     return len;
 }
 
-void swapVals(EnqItem *a, EnqItem *b) {
-    int temp = a->val;
-    a->val = b->val;
-    b->val = temp;
+void swapData(EnqItem *a, EnqItem *b) {
+    void *temp = a->data;
+    a->data = b->data;
+    b->data = temp;
 }
 
 EnqItem *getElement(DoublyLinkedList anchor, int index) {
     EnqItem *current = anchor->next;
-
     int count = 0;
     while (current != anchor) {
         if (count == index)
@@ -150,4 +146,32 @@ EnqItem *getElement(DoublyLinkedList anchor, int index) {
     }
 
     return NULL;
+}
+
+void reverse(DoublyLinkedList anchor) {
+        EnqItem *cur = anchor->prev;
+        EnqItem *temp;
+        while (cur != anchor) {
+            temp = cur->next;
+            cur->next = cur->prev;
+            cur->prev = temp;
+            cur = cur->next;
+        }
+}
+
+DoublyLinkedList filter(DoublyLinkedList anchor, bool (*function) (EnqItem *)) {
+	DoublyLinkedList newlist = copy(anchor);
+	ITERATE(cur, newlist) {
+		if (!function(cur))
+			dequeue(cur);
+	}
+	return newlist;
+}
+
+DoublyLinkedList copy(DoublyLinkedList anchor) {
+	DoublyLinkedList newlist = initDoublyLinkedList(anchor->name);
+	ITERATE(cur, anchor) {
+		appendTail(cur, newlist);
+	}
+	return newlist;
 }
