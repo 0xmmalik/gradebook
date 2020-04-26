@@ -1,11 +1,10 @@
 /**
  * Doubly Linked List
  * by Manav Malik (2020)
- * Adapted by Manav Malik
- * for Stack Implementation (2020)
  */
 
 #include "doublell.h"
+#include "gradebook.h"
 
 EnqItem *initEnqItem(char *name, void *data) {
     EnqItem *e = malloc(sizeof(EnqItem));
@@ -36,16 +35,18 @@ bool isEmpty(DoublyLinkedList anchor) {
 
 void appendHead(EnqItem *e, DoublyLinkedList anchor) {
     e->next = anchor->next;
+    anchor->next->prev = e;
     anchor->next = e;
+    e->prev = anchor;
     if (anchor->prev == anchor)
         anchor->prev = e;
 }
 
 void appendTail(EnqItem *e, DoublyLinkedList anchor) {
     e->prev = anchor->prev;
-    e->next = anchor;
     anchor->prev->next = e;
     anchor->prev = e;
+    e->next = anchor;
     if (anchor->next == anchor)
         anchor->next = e;
 }
@@ -159,8 +160,8 @@ void reverse(DoublyLinkedList anchor) {
         }
 }
 
-DoublyLinkedList filter(DoublyLinkedList anchor, bool (*function) (EnqItem *)) {
-	DoublyLinkedList newlist = copy(anchor);
+DoublyLinkedList filter(DoublyLinkedList anchor, bool (*function) (EnqItem *), size_t sz) {
+	DoublyLinkedList newlist = copy(anchor, sz);
 	ITERATE(cur, newlist) {
 		if (!function(cur))
 			dequeue(cur);
@@ -168,10 +169,19 @@ DoublyLinkedList filter(DoublyLinkedList anchor, bool (*function) (EnqItem *)) {
 	return newlist;
 }
 
-DoublyLinkedList copy(DoublyLinkedList anchor) {
+DoublyLinkedList copy(DoublyLinkedList anchor, size_t sz) {
 	DoublyLinkedList newlist = initDoublyLinkedList(anchor->name);
 	ITERATE(cur, anchor) {
-		appendTail(cur, newlist);
+        void * copy_buf = malloc(sz);
+        memcpy(copy_buf, cur->data, sz);
+		appendTail(initEnqItem(cur->name, copy_buf), newlist);
 	}
 	return newlist;
+}
+
+void sort(DoublyLinkedList anchor, int num_elements) {
+    for (int i = 0; i < num_elements - 1; i++)
+        for (int j = num_elements - 2; j != i - 1; j--)
+            if (((student *)getElement(anchor, j)->data)->grade < ((student *)getElement(anchor, j + 1)->data)->grade)
+                swapData(getElement(anchor, j), getElement(anchor, j + 1));
 }

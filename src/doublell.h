@@ -13,7 +13,7 @@
 #include <stdbool.h>
 
 typedef struct EnqItem {
-    char name[20];
+    char name[64];
     void *data;
     struct EnqItem * prev;
     struct EnqItem * next;
@@ -43,9 +43,10 @@ void destroyItem(EnqItem *);
 DoublyLinkedList emptyList(DoublyLinkedList);
 DoublyLinkedList destroyList(DoublyLinkedList);
 int getLength(DoublyLinkedList);
-void swapVals(EnqItem *a, EnqItem *b);
+void swapData(EnqItem *a, EnqItem *b);
 EnqItem *getElement(DoublyLinkedList, int);
-DoublyLinkedList copy(DoublyLinkedList);
+DoublyLinkedList copy(DoublyLinkedList, size_t);
+void sort(DoublyLinkedList, int);
 
 #define ITERATE(cur, list) for(EnqItem * cur = (list)->next; cur != (list); cur = cur->next)
 #define ITERATE_REV(cur, list) for(EnqItem * cur = (list)->prev; cur != (list); cur = cur->prev)

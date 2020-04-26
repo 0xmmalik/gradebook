@@ -2,21 +2,24 @@
 #define GB_H
 
 #include "doublell.h"
+#include "stackmachine.h"
 
-typedef struct student {
+typedef struct {
 	char * lastname;
 	char * firstname;
 
 	float grade;
 } student;
 
-typedef struct gb_file {
+typedef struct {
 	char *title;
 	DoublyLinkedList data;
 	int num_students;
 } gb;
 
-gb *loadfile(char *);
-void printfile(gb *);
+stack_elem *loadfile(void *);
+//stack_elem *printfile(void *);
+stack_elem *top(void *, void *);
+stack_elem *all();
 
 #endif
