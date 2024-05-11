@@ -125,7 +125,7 @@ DoublyLinkedList destroyList(DoublyLinkedList anchor) {
 int getLength(DoublyLinkedList anchor) {
     int len = 0;
     ITERATE(cur, anchor) {
-	len++;
+        len++;
     }
     return len;
 }
@@ -150,38 +150,38 @@ EnqItem *getElement(DoublyLinkedList anchor, int index) {
 }
 
 void reverse(DoublyLinkedList anchor) {
-        EnqItem *cur = anchor->prev;
-        EnqItem *temp;
-        while (cur != anchor) {
-            temp = cur->next;
-            cur->next = cur->prev;
-            cur->prev = temp;
-            cur = cur->next;
-        }
+    EnqItem *cur = anchor->prev;
+    EnqItem *temp;
+    while (cur != anchor) {
+        temp = cur->next;
+        cur->next = cur->prev;
+        cur->prev = temp;
+        cur = cur->next;
+    }
 }
 
-DoublyLinkedList filter(DoublyLinkedList anchor, bool (*function) (EnqItem *), size_t sz) {
-	DoublyLinkedList newlist = copy(anchor, sz);
-	ITERATE(cur, newlist) {
-		if (!function(cur))
-			dequeue(cur);
-	}
-	return newlist;
+DoublyLinkedList filter(DoublyLinkedList anchor, bool (*function)(EnqItem *), size_t sz) {
+    DoublyLinkedList newlist = copy(anchor, sz);
+    ITERATE(cur, newlist) {
+        if (!function(cur))
+            dequeue(cur);
+    }
+    return newlist;
 }
 
 DoublyLinkedList copy(DoublyLinkedList anchor, size_t sz) {
-	DoublyLinkedList newlist = initDoublyLinkedList(anchor->name);
-	ITERATE(cur, anchor) {
-        void * copy_buf = malloc(sz);
+    DoublyLinkedList newlist = initDoublyLinkedList(anchor->name);
+    ITERATE(cur, anchor) {
+        void *copy_buf = malloc(sz);
         memcpy(copy_buf, cur->data, sz);
-		appendTail(initEnqItem(cur->name, copy_buf), newlist);
-	}
-	return newlist;
+        appendTail(initEnqItem(cur->name, copy_buf), newlist);
+    }
+    return newlist;
 }
 
 void sort(DoublyLinkedList anchor, int num_elements) {
     for (int i = 0; i < num_elements - 1; i++)
         for (int j = num_elements - 2; j != i - 1; j--)
-            if (((student *)getElement(anchor, j)->data)->grade < ((student *)getElement(anchor, j + 1)->data)->grade)
+            if (((student *) getElement(anchor, j)->data)->grade < ((student *) getElement(anchor, j + 1)->data)->grade)
                 swapData(getElement(anchor, j), getElement(anchor, j + 1));
 }
